@@ -9,8 +9,7 @@ export class AppController {
   @Render('homepage')
   getHello() {
     return {
-      message: "Hello World"
-    }
+      message: 'Hello World',
+    };
   }
-
 }
