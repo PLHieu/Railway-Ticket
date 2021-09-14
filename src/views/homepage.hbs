@@ -1,10 +1,298 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>App</title>
-  </head>
-  <body>
-    {{ message }}
-  </body>
-</html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page - Railway reservation system</title>
+  <link rel="stylesheet" href="css/homepage.css">
+  <link rel="stylesheet" href="css/result.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
+</head>
+
+
+<body>
+  <header>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm"
+      style="background-color: #64b5f6;">
+      <h5 class="my-0 mr-md-auto font-weight-bold text-white font-italic"
+        style=" font-family:'Times New Roman', Times, serif; font-size: xx-large;">Đường sắt VN</h5>
+      <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-white" href="/tracuuve">Look up Ticket</a>
+        <a class="p-2 text-white" href="/admin">Admin Page</a>
+        <a class="p-2 text-white" href="#">How to use</a>
+        <a class="p-2 text-white" href="#">Developer Information</a>
+        {{#if user}}
+          <a class="p-2 text-white" href="/api/signout">Sign out</a>
+        {{/if}}
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="card mb-3">
+            <h5 class="card-header text-xl-center border-bottom border-primary" style="color:#1976d2 ">
+              Route Information
+            </h5>
+            <form>
+              <div class="list-group list-group-flush ml-3 mr-3">
+
+                <div class="mb-2">
+                  <label for="formDepart" class="form-label font-weight-bold"
+                    style="color: #64b5f6; padding-top: 5px;">Depart Station</label>
+                  <select class="form-control" id="formDepart" placeholder="Depart Station"></select>
+                </div>
+
+                <div class="mb-2">
+                  <label for="formArrive" class="form-label font-weight-bold" style="color: #64b5f6">Arrive
+                    Station</label>
+                  <select class="form-control" id="formArrive" placeholder="Arrive Station"></select>
+                </div>
+
+                <div class="mb-2">
+                  <label for="formDepartDate" class="form-label font-weight-bold" style="color: #64b5f6">Depart
+                    Date</label>
+                  <input class="form-control" type="text" id="formDepartDate" name="formDepartDate">
+                </div>
+
+                <a id="btnSearch" class="btn btn-primary align-items-center my-3">Search</a>
+
+              </div>
+            </form>
+
+
+
+          </div>
+          <div class="card listticket-container">
+            <h4 class="card-header text-xl-center" style="color: #1976d2 ;">
+              Cart
+            </h4>
+            <div class="card-body " style="padding: 5px 2px;">
+              <div class="listticket">
+                <p class=" noticket card-text font-weight-bold text-xl-center " style="margin-bottom: 5px;">No ticket
+                </p>
+              </div>
+              <a href="#" class="btn btn-primary align-items-center mb-2" id="btnbuyticket"
+                style="margin-left: 33%; height: fit-content; padding: 1px 5px;">Buy Ticket</a>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="col-sm-9">
+
+          <div class="listtrain">
+            <!-- <div class="train" id="SE1">
+              <div class="name">SE1</div>
+              <div class="information">
+                <table>
+                  <tr>
+                    <td>Arrive Time</td>
+                    <td>11/5 11:20</td>
+                  </tr>
+                  <tr>
+                    <td>Depart Time</td>
+                    <td>11/5 11:20</td>
+                  </tr>
+                </table>
+              </div>
+            </div> -->
+
+            <!-- <div class="train" id="SE7">
+              <div class="name">SE7</div>
+              <div class="information">
+                <table>
+                  <tr>
+                    <td>Arrive Time</td>
+                    <td>11/5 11:20</td>
+                  </tr>
+                  <tr>
+                    <td>Depart Time</td>
+                    <td>11/5 11:20</td>
+                  </tr>
+                </table>
+              </div>
+            </div> -->
+          </div>
+
+          <div class="listcoach-container">
+            <div class="listcoach">
+              <!-- <div class="coachwraper">
+                <div class="coach-name">Toa</div>
+                <div class="coach GNT" id="1C">
+                  <span class="window"></span>
+                  <span class="window"></span>
+                  <span class="window"></span>
+                </div>
+              </div>
+              
+              <div class="coach GMT" id="2C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GNDH" id="3C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GMDH" id="4C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GCT" id="5C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GNDH" id="6C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GCT" id="7C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GCDH" id="8C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach GNT" id="9C">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div>
+              <div class="coach headcoach" id="headcoach">
+                <span class="window"></span>
+                <span class="window"></span>
+                <span class="window"></span>
+              </div> -->
+            </div>
+          </div>
+
+          <div class= "listseat-container">
+          </div>
+          <div class= "formuser-container">
+           <!-- <form>
+              <table>
+                  <tr>
+                    <td>Họ tên</td>
+                    <td>Số CMND/ Hộ chiếu/ Ngày tháng năm sinh trẻ em</td>
+                    <td>Đối tượng</td>
+                    <td>Thông tin chỗ</td>
+                    <td>Giá vé</td>
+                    <td>Giảm giá</td>
+                    <td>Thành tiền</td>
+                    <td>Xoá</td>
+                  </tr>
+                  <tr>
+                    <td> <input type="text" placeholder="Họ và tên"> </td>
+                    <td> <input type="text" placeholder="CMND"> </td>
+                    <td> <input type="text" placeholder="Họ và tên"> </td>
+                    <td> Thông tin vé </td>
+                    <td> Giá vé </td>
+                    <td> Giảm giá </td>
+                    <td> Thành tiền </td>
+                    <td> Del </td>
+                  </tr>
+              </table>
+            </form> -->
+            
+          </div>
+          <div class= "thanhtoan-container">
+            
+            
+          </div>
+
+          <div id="loading-self">
+          </div>
+          <img id="notfound" src="images/tenor.gif" />
+
+          <div class="card col-sm-12" id="howtouse">
+            <h6 class="card-header text-xl-left border-bottom"
+              style=" background-color: #ff6d00 ; color: white; padding: 4px 15px;">
+              Quy định đổi trả vé từ ngày abc xyz
+            </h6>
+            <div class="card-body" style="padding: 5px 2px;">
+              <p class="card-text text-justify" style="margin-bottom: 5px; padding: 0px 15px;">
+                1. Thời gian, mức phí đổi trả vé:<br>
+
+                - Đổi vé: Vé cá nhân đổi trước giờ tàu chạy 24 giờ trở lên, lệ phí là 20.000 đồng/vé; không áp dụng đổi
+                vé đối với vé tập thể.
+                <br>
+                - Trả vé:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp; + Vé cá nhân: Trả vé trước giờ tàu chạy từ 4 giờ đến dưới 24 giờ, lệ phí là 20%
+                giá vé; từ 24 giờ trở lên lệ phí là 10% giá vé.
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp; + Vé tập thể: Trả vé trước giờ tàu chạy từ 24 giờ đến dưới 72 giờ, lệ phí là
+                20% giá vé; từ 72 giờ trở lên lệ phí là 10% giá vé.
+                <br>
+                2. Hình thức trả vé.<br>
+                - Khi hành khách mua vé và thanh toán online qua website bán vé của Ngành Đường sắt, app bán vé hoặc các
+                ứng dụng mua vé tàu hỏa của các đối tác thứ ba thì có thể trả vé online qua các website bán vé của Ngành
+                Đường sắt hoặc đến trực tiếp nhà ga.
+                <br>
+                - Khi hành khách mua vé bằng các hình thức khác, muốn đổi vé, trả vé hành khách đến trực tiếp nhà ga kèm
+                theo giấy tờ tùy thân bản chính của người đi tàu (hoặc người mua vé) cho nhân viên đường sắt. Đồng thời,
+                thông tin trên thẻ đi tàu phải trùng khớp với giấy tờ tùy thân của hành khách.
+                <br>
+                Trân trọng cảm ơn!.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="container" style="margin-top: 15px;">
+
+
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+  </main>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+  <script src="https://cdn.socket.io/4.1.1/socket.io.min.js"
+    integrity="sha384-cdrFIqe3RasCMNE0jeFG9xJHog/tgOVC1E9Lzve8LQN1g5WUHo0Kvk1mawWjxX7a"
+    crossorigin="anonymous"></script>
+  <script src="js/homepage.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    </script>
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+  <script type="text/javascript">
+    $("#formDepartDate").datepicker({
+
+      minDate: new Date(),
+      maxDate: '+30D'
+
+    });
+    $('#userbirthday').datetimepicker({
+        format: 'd/m/Y',
+        timepicker: false,
+        mask: true,
+        maxDate: new Date()
+    });
+  </script>
+
+</body>
