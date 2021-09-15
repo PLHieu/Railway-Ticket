@@ -1,3 +1,4 @@
+import { TrainModule } from './modules/train/train.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,6 +14,7 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
     }),
+    TrainModule,
   ],
   controllers: [AppController],
   providers: [AppService],
