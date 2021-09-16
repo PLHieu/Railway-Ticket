@@ -11,11 +11,11 @@ export class Train {
 
   @ManyToOne(() => Station)
   @JoinColumn({ name: 'IDGaXuatPhat' })
-  departStation: string;
+  departStation: Station;
 
   @ManyToOne(() => Station)
   @JoinColumn({ name: 'IDGaDich' })
-  arriveStation: string;
+  arriveStation: Station;
 
   @Column({ type: 'time', name: 'GioXuatPhat' })
   departTime: string;
@@ -24,5 +24,5 @@ export class Train {
   timeTravel: number;
 
   @Column({ name: 'Ver' })
-  ver: number;
+  verTime: number;
 }

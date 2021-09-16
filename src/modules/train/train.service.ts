@@ -11,6 +11,8 @@ export class TrainService {
   ) {}
 
   findAll() {
-    return this.trainRepository.find();
+    return this.trainRepository.find({
+      relations: ['departStation', 'arriveStation'],
+    });
   }
 }
