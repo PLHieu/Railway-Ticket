@@ -168,11 +168,11 @@ function onClickSearchTrain() {
   arriveStation = $('#formArrive').val();
 
   $.post(
-    '/api/search/searchtrain',
+    '/arrangedtrain/search',
     {
       leaveStation,
       arriveStation,
-      dateTravel:
+      departDate:
         $('#formDepartDate').datepicker('getDate').getFullYear() +
         '-' +
         ($('#formDepartDate').datepicker('getDate').getMonth() + 1) +
@@ -409,8 +409,8 @@ function renderListTrain(listtrain) {
   // clear listrain DOM
   $('.listtrain').empty();
   for (let i = 0; i < listtrain.length; i++) {
-    let $train = $('<div>', { class: 'train', id: listtrain[i].idTrain });
-    $train.append(`<div class="name" >${listtrain[i].idTrain}</div>`);
+    let $train = $('<div>', { class: 'train', id: listtrain[i].id });
+    $train.append(`<div class="name" >${listtrain[i].id}</div>`);
     $train.append(`<div class="information">
                             <table>
                             <tr>
