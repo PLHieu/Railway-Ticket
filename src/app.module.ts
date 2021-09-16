@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StationModule } from './modules/station/station.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ArrangedTrainModule } from './modules/arrangedTrain/arrangedTrain.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'client'),
     }),
     TrainModule,
+    ArrangedTrainModule,
   ],
   controllers: [AppController],
   providers: [AppService],
