@@ -293,10 +293,10 @@ function onClickSearchCoach() {
   $loading.addClass('show');
 
   $.post(
-    '/api/search/searchcoach',
+    '/coach/search',
     {
-      idTrain: trainselected.idTrain,
-      ver: trainselected.ver,
+      id: trainselected.id,
+      ver: trainselected.verStructure,
     },
     function (data) {
       listCoach = data;
@@ -439,15 +439,15 @@ function renderListCoach(listcoach) {
     let $onecoach_wraper = $('<div>', { class: 'coachwraper' });
     let $onecoach = $('<div>', {
       class: 'coach',
-      id: listcoach[i].idCoach + 'C',
+      id: listcoach[i].id + 'C',
     });
     $onecoach.append(`<span class="window"></span>
         <span class="window"></span>
         <span class="window"></span>`);
-    $onecoach.addClass(listcoach[i].idTypeCoach);
+    $onecoach.addClass(listcoach[i].type);
 
     $onecoach_wraper.append(
-      `<div class="coach-name">Toa ${listcoach[i].idCoach}</div>`,
+      `<div class="coach-name">Toa ${listcoach[i].id}</div>`,
     );
     $onecoach_wraper.append($onecoach);
     $('.listcoach').append($onecoach_wraper);
@@ -610,7 +610,7 @@ function getFirstDepartTimeFromTrainID(idtrain) {
 function findTrainByID(idtrain) {
   let n = listTrain.length;
   for (let i = 0; i < n; i++) {
-    if (listTrain[i].idTrain == idtrain) {
+    if (listTrain[i].id == idtrain) {
       return listTrain[i];
     }
   }

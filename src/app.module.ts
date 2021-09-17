@@ -7,6 +7,7 @@ import { StationModule } from './modules/station/station.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ArrangedTrainModule } from './modules/arrangedTrain/arrangedTrain.module';
+import { CoachModule } from './modules/coach/coach.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ArrangedTrainModule } from './modules/arrangedTrain/arrangedTrain.modul
     }),
     TrainModule,
     ArrangedTrainModule,
+    CoachModule,
   ],
   controllers: [AppController],
   providers: [AppService],
