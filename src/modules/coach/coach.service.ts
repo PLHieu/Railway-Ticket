@@ -16,8 +16,11 @@ export class CoachService {
 
   findAllCoachByTrainAndVerStructure({ id, ver }) {
     return this.coachRepository.find({
-      train: id,
-      verStructure: ver,
+      where: {
+        train: id,
+        verStructure: ver,
+      },
+      relations: ['type'],
     });
   }
 }

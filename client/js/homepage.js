@@ -138,14 +138,20 @@ function onClickSearchSeat() {
   listSeatSelected = [];
   coachselected = findCoachByID(parseInt(this.id));
   // console.log("coach" + coachselected.IDToa + "selected");
-  socket.emit('search-seat', {
-    idTrain: trainselected.idTrain,
-    idCoach: coachselected.idCoach,
-    leaveStation,
-    arriveStation,
-    departTime: trainselected.departTime,
-    ver: trainselected.ver,
-  });
+  socket.emit(
+    'search-seat',
+    {
+      idTrain: trainselected.id,
+      idCoach: coachselected.id,
+      leaveStation,
+      arriveStation,
+      departTime: trainselected.departTime,
+      verStructure: trainselected.verStructure,
+    },
+    (data) => {
+      renderListSeat(data);
+    },
+  );
 }
 
 function onClickSearchTrain() {
@@ -317,18 +323,18 @@ function renderListSeat(listseat) {
   $('.listseat-container').empty();
   $('.listseat-container').append(
     `<p>Toa số ${
-      coachselected.idCoach +
+      coachselected.id +
       ' - Tàu ' +
-      coachselected.idTrain +
+      coachselected.train +
       ': ' +
-      coachselected.typeCoachName
+      coachselected.type.name
     }</p>`,
   );
   $('.listseat-container').append(`<div class="listseat"></div>`);
   $listseatDOM = $('.listseat');
-  let numSeat = listSeat.length;
+  let numSeat = listseat.length;
   let countSeat = 1;
-  if (getMainCoachType(coachselected.idTypeCoach) === 'GN') {
+  if (getMainCoachType(coachselected.type.id) === 'GN') {
     let numCabin = numSeat / 6;
     for (let i = 0; i < numCabin; i++) {
       let $cabin = $('<div>', { class: 'cabin' });
@@ -336,13 +342,13 @@ function renderListSeat(listseat) {
         let $floor = $('<div>', { class: 'floor' });
         $floor.append(
           `<span class="seat ${getListSeatStatusString(
-            listSeat[countSeat - 1].status,
+            listseat[countSeat - 1].status,
           )}" id=${countSeat + 'S'}>${countSeat}</span>`,
         );
         countSeat++;
         $floor.append(
           `<span class="seat ${getListSeatStatusString(
-            listSeat[countSeat - 1].status,
+            listseat[countSeat - 1].status,
           )}" id=${countSeat + 'S'}>${countSeat}</span>`,
         );
         countSeat++;
@@ -351,8 +357,8 @@ function renderListSeat(listseat) {
       $listseatDOM.append($cabin);
     }
   } else if (
-    getMainCoachType(coachselected.idTypeCoach) === 'GC' ||
-    getMainCoachType(coachselected.idTypeCoach) === 'GM'
+    getMainCoachType(coachselected.type.id) === 'GC' ||
+    getMainCoachType(coachselected.type.id) === 'GM'
   ) {
     let numSeatOneRow = numSeat / 4;
     for (let i = 0; i < 2; i++) {
@@ -362,7 +368,7 @@ function renderListSeat(listseat) {
         for (let k = 0; k < numSeatOneRow; k++) {
           $floor.append(
             `<span class="seat ${getListSeatStatusString(
-              listSeat[countSeat - 1].status,
+              listseat[countSeat - 1].status,
             )}" id=${countSeat + 'S'}>${countSeat}</span>`,
           );
           countSeat++;
@@ -384,7 +390,7 @@ function renderListSeat(listseat) {
     }
     $listseatDOM.addClass('chair');
   }
-  $listseatDOM.addClass(coachselected.idTypeCoach);
+  $listseatDOM.addClass(coachselected.type.id);
 }
 
 //render list station for selection
@@ -444,7 +450,7 @@ function renderListCoach(listcoach) {
     $onecoach.append(`<span class="window"></span>
         <span class="window"></span>
         <span class="window"></span>`);
-    $onecoach.addClass(listcoach[i].type);
+    $onecoach.addClass(listcoach[i].type.id);
 
     $onecoach_wraper.append(
       `<div class="coach-name">Toa ${listcoach[i].id}</div>`,
@@ -620,7 +626,7 @@ function findTrainByID(idtrain) {
 function findCoachByID(idcoach) {
   let n = listCoach.length;
   for (let i = 0; i < n; i++) {
-    if (listCoach[i].idCoach == idcoach) {
+    if (listCoach[i].id == idcoach) {
       return listCoach[i];
     }
   }
