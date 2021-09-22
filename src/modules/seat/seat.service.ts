@@ -16,9 +16,11 @@ export class SeatService {
     verStructure: number,
   ) {
     return this.seatRepository.find({
-      train,
-      coach,
-      verStructure,
+      seatPosition: {
+        train: train,
+        coach: coach,
+        verStructure,
+      },
     });
   }
 }
