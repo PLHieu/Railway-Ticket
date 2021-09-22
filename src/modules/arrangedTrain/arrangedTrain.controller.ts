@@ -23,6 +23,8 @@ export class ArrangedTrainController {
             verStructure: train.Ver,
             arriveTime: train.GioCapGa,
             leaveTime: train.GioRoiGa,
+            departTime: train.GioXuatPhat,
+            station: train.IDGa,
           };
         }),
       );
