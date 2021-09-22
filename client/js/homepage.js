@@ -26,7 +26,7 @@ socket.on('event', (data) => {
   switch (data.code) {
     case 1:
       console.log('hold successfully');
-      holdTicket(data.data.idSeat);
+      holdTicket(data.data.seatPosition.seat);
       break;
 
     case 2:
@@ -112,13 +112,13 @@ function onClickTicket() {
   // console.log(this.id);
   // console.log("hieuma");
   let information = {
-    idTrain: trainselected.idTrain,
-    idCoach: coachselected.idCoach,
-    idSeat: parseInt(this.id),
+    train: trainselected.id,
+    coach: coachselected.id,
+    seat: parseInt(this.id),
     departTime: trainselected.departTime,
     leaveStation,
     arriveStation,
-    ver: trainselected.ver,
+    verStructure: trainselected.verStructure,
     holdingTime: new Date(),
   };
 
