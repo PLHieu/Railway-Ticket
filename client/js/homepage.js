@@ -24,19 +24,19 @@ socket.on('disconnect', (reason) => {
 
 socket.on('event', (data) => {
   switch (data.code) {
-    case 1:
-      console.log('hold successfully');
-      holdTicket(data.data.seatPosition.seat);
-      break;
+    // case 1:
+    //   console.log('hold successfully');
+    //   holdTicket(data.data.seatPosition.seat);
+    //   break;
 
     case 2:
       console.log('hold fail');
       break;
 
-    case 3:
-      console.log('unhold successfully');
-      unholdTicket(data.data.idSeat);
-      break;
+    // case 3:
+    //   console.log('unhold successfully');
+    //   unholdTicket(data.data.idSeat);
+    //   break;
 
     case 4:
       console.log('unhold fail');
@@ -55,14 +55,13 @@ socket.on('event', (data) => {
                 khi mot nguoi khac o cung toa unholdticket thanh cong thi server thong bao su kien nay den minh  
             */
       console.log('someone unhold seat');
-      console.log(data.data);
       soUnHoldTicket(data.data);
       break;
 
-    case 6:
-      listSeat = data.data;
-      renderListSeat(listSeat);
-      break;
+    // case 6:
+    //   listSeat = data.data;
+    //   renderListSeat(listSeat);
+    //   break;
 
     case 8:
       /*
@@ -109,8 +108,6 @@ $(document).ready(function () {
 });
 
 function onClickTicket() {
-  // console.log(this.id);
-  // console.log("hieuma");
   let information = {
     train: trainselected.id,
     coach: coachselected.id,
@@ -120,14 +117,28 @@ function onClickTicket() {
     arriveStation,
     verStructure: trainselected.verStructure,
     holdingTime: new Date(),
+    leaveTime: trainselected.arriveTime,
   };
 
-  if (listSeatSelected.includes(information.idSeat)) {
-    socket.emit('unhold-ticket', information);
-    // neu thanh cong thi moi kich hoat unholdsuccess (xem socket.on)
+  if (
+    listSeatSelected.includes(
+      JSON.stringify({
+        train: trainselected.id,
+        coach: coachselected.id,
+        seat: parseInt(this.id),
+        verStructure: trainselected.verStructure,
+      }),
+    )
+  ) {
+    console.log('unhold');
+    socket.emit('unhold-ticket', information, ({ data, code }) => {
+      unholdTicket(data.ticket);
+    });
   } else {
-    socket.emit('hold-ticket', information);
-    // neu thanh cong thi kich hoat jquey css doi voi moi ticket
+    console.log('hold');
+    socket.emit('hold-ticket', information, ({ data, code }) => {
+      holdTicket(data.ticket);
+    });
   }
 }
 
@@ -141,15 +152,15 @@ function onClickSearchSeat() {
   socket.emit(
     'search-seat',
     {
-      idTrain: trainselected.id,
-      idCoach: coachselected.id,
+      train: trainselected.id,
+      coach: coachselected.id,
       leaveStation,
       arriveStation,
       departTime: trainselected.departTime,
       verStructure: trainselected.verStructure,
     },
     (data) => {
-      renderListSeat(data);
+      renderListSeat(data.data);
     },
   );
 }
@@ -468,56 +479,27 @@ function renderListCoach(listcoach) {
     </div>`);
 }
 
-function holdTicket(idseat) {
-  listSeatSelected.push(idseat);
-  temp = '#' + leaveStation;
-  leaveStationName = $(temp).text();
-  temp = '#' + arriveStation;
-  arriveStationName = $(temp).text();
-  val = $('.noticket').text();
-  if (val.length > 0) {
-    $('.listticket').empty();
-  }
-  tdepart = getDateTimeString(new Date(trainselected.departTime));
-  content = `<p class="chosen-ticket" id="ticket${coachselected.idTrain}_${
-    coachselected.idCoach
-  }_${idseat}_${leaveStation}_${arriveStation}">Tàu ${
-    coachselected.idTrain +
-    ' ' +
-    leaveStationName +
-    ' - ' +
-    arriveStationName +
-    '<br>' +
-    coachselected.typeCoachName +
-    ' - Toa ' +
-    coachselected.idCoach +
-    ' Chỗ ' +
-    idseat
-  }`;
-  content = content + '<br>' + 'Khởi hành: ' + tdepart + '</p>';
-  $('.listticket').append(content);
-  $listseatDOM = $('.listseat');
-  let numSeat = listSeat.length;
-  let countSeat = 1;
-  const id = `#${idseat}S`;
+function holdTicket(ticket) {
+  listSeatSelected.push(JSON.stringify(ticket.seatPosition));
+  const id = `#${ticket.seatPosition.seat}S`;
   $(id).addClass('bought');
 }
 
-function unholdTicket(idseat) {
-  const index = listSeatSelected.indexOf(idseat);
+function unholdTicket(ticket) {
+  const index = listSeatSelected.indexOf(JSON.stringify(ticket.seatPosition));
   if (index > -1) {
     listSeatSelected.splice(index, 1);
   }
 
-  const id = `#${idseat}S`;
-  const idticket = `#ticket${coachselected.idTrain}_${coachselected.idCoach}_${idseat}_${leaveStation}_${arriveStation}`;
-  $(idticket).remove();
+  const id = `#${ticket.seatPosition.seat}S`;
+  // const idticket = `#ticket${coachselected.train}_${coachselected.idCoach}_${idseat}_${leaveStation}_${arriveStation}`;
+  // $(idticket).remove();
   $(id).removeClass('bought');
 }
 
 function soHoldTicket(data) {
   $.post(
-    '/api/checkoverlap/',
+    '/station/checkoverlap/',
     {
       firstLeaveStation: leaveStation,
       firstArriveStation: arriveStation,
@@ -526,7 +508,7 @@ function soHoldTicket(data) {
     },
     function (res) {
       if (res.data.overLapped) {
-        const id = `#${data.idSeat}S`;
+        const id = `#${data.seat}S`;
         $(id).addClass('holding');
       }
     },
@@ -535,7 +517,7 @@ function soHoldTicket(data) {
 
 function soUnHoldTicket(data) {
   $.post(
-    '/api/checkoverlap/',
+    '/station/checkoverlap/',
     {
       firstLeaveStation: leaveStation,
       firstArriveStation: arriveStation,
@@ -544,7 +526,7 @@ function soUnHoldTicket(data) {
     },
     function (res) {
       if (res.data.overLapped) {
-        const id = `#${data.idSeat}S`;
+        const id = `#${data.seat}S`;
         $(id).removeClass('holding');
       }
     },

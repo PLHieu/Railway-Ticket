@@ -9,12 +9,47 @@ export class TicketService {
     private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
-  async holdTicket(dto: CreateTicketDto) {
-    const { train, coach, seat, verStructure, ...restProps } = dto;
+  async holdTicket(dto: any) {
+    const {
+      train,
+      coach,
+      seat,
+      verStructure,
+      leaveTime,
+      departTime,
+      ...restProps
+    } = dto;
+
     const ticket = await this.ticketRepository.create({
       seatPosition: { train, coach, seat, verStructure },
+      leaveTime: new Date(leaveTime),
+      departTime: new Date(departTime),
       ...restProps,
     });
-    return this.ticketRepository.save(ticket);
+
+    try {
+      const result: any = await this.ticketRepository.save(ticket);
+      return result;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async unHoldTicket(dto: CreateTicketDto) {
+    const { train, coach, seat, verStructure, departTime, leaveStation } = dto;
+
+    const ticket = await this.ticketRepository.findOne({
+      seatPosition: { train, coach, seat, verStructure },
+      departTime: new Date(departTime),
+      leaveStation,
+    });
+
+    await this.ticketRepository.delete({
+      seatPosition: { train, coach, seat, verStructure },
+      departTime: new Date(departTime),
+      leaveStation,
+    });
+
+    return ticket;
   }
 }
