@@ -11,6 +11,6 @@ export class Station {
   @Column({ name: 'SoLuongDuongRay' })
   numTrack: number;
 
-  @Column({ name: 'SoLuongDuongRay' })
+  @Column({ name: 'SoKM' })
   km: number;
 }
