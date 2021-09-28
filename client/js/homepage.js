@@ -211,12 +211,12 @@ function onClickSearchTrain() {
 }
 function onClickBuyTicket() {
   val = $('.noticket').text();
-  if (val.length > 0) {
-    return;
-  }
-  $.post('/api/getticketsession', function (data) {
-    listTicket = data;
-  });
+  // if (val.length > 0) {
+  //   return;
+  // }
+  // $.post('/api/getticketsession', function (data) {
+  //   listTicket = data;
+  // });
   $train = $('.listtrain');
   $coach = $('.listcoach-container');
   $seat = $('.listseat-container');
@@ -249,49 +249,51 @@ function onClickBuyTicket() {
   });
   $('#formid').submit(function (e) {
     e.preventDefault();
-    textbd = $('#userbirthday').val();
-    text = $('#username').val();
-    if (checkEmptyString(text)) {
-      window.alert('Tên không được rỗng');
-      return;
-    }
-    if (checkEmptyString($('#usercmnd').val())) {
-      window.alert('Chứng minh nhân dân không được rỗng');
-      return;
-    }
-    if (checkEmptyString($('#userlocation').val())) {
-      window.alert('Quê quán không được rỗng');
-      return;
-    }
-    if (checkEmptyString($('#userphone').val())) {
-      window.alert('Số điện thoại không được rỗng');
-      return;
-    }
-    if (checkEmptyString($('#userbirthday').val())) {
-      window.alert('Ngày sinh không được rỗng');
-      return;
-    }
-    if (validNumber($('#userphone').val())) {
-      window.alert('Số điện thoại không khả dụng');
-      return;
-    }
-    if (validNumber($('#usercmnd').val())) {
-      window.alert('Chứng minh nhân dân không khả dụng');
-      return;
-    }
-    bd = textbd.slice(6) + '-' + textbd.slice(3, 5) + '-' + textbd.slice(0, 2);
-    let userinfor = {
+    // textbd = $('#userbirthday').val();
+    // text = $('#username').val();
+    // if (checkEmptyString(text)) {
+    //   window.alert('Tên không được rỗng');
+    //   return;
+    // }
+    // if (checkEmptyString($('#usercmnd').val())) {
+    //   window.alert('Chứng minh nhân dân không được rỗng');
+    //   return;
+    // }
+    // if (checkEmptyString($('#userlocation').val())) {
+    //   window.alert('Quê quán không được rỗng');
+    //   return;
+    // }
+    // if (checkEmptyString($('#userphone').val())) {
+    //   window.alert('Số điện thoại không được rỗng');
+    //   return;
+    // }
+    // if (checkEmptyString($('#userbirthday').val())) {
+    //   window.alert('Ngày sinh không được rỗng');
+    //   return;
+    // }
+    // if (validNumber($('#userphone').val())) {
+    //   window.alert('Số điện thoại không khả dụng');
+    //   return;
+    // }
+    // if (validNumber($('#usercmnd').val())) {
+    //   window.alert('Chứng minh nhân dân không khả dụng');
+    //   return;
+    // }
+    // bd = textbd.slice(6) + '-' + textbd.slice(3, 5) + '-' + textbd.slice(0, 2);
+    let userInfo = {
       name: $('#username').val(),
       cmnd: $('#usercmnd').val(),
-      birthday: bd,
+      // birthday: '',
       location: $('#userlocation').val(),
       phone: $('#userphone').val(),
     };
-    let ticketdata = {
-      listTicket,
-      userinfor,
-    };
-    socket.emit('boughtticket', ticketdata);
+    // let ticketdata = {
+    //   // listTicket,
+    //   userinfor,
+    // };
+    socket.emit('bought-ticket', {
+      userInfo,
+    });
   });
 }
 function onClickSearchCoach() {
@@ -553,7 +555,7 @@ function soUnBoughtTicket(data) {
 
 function soBoughtTicket(data) {
   $.post(
-    '/api/checkoverlap/',
+    '/station/checkoverlap/',
     {
       firstLeaveStation: leaveStation,
       firstArriveStation: arriveStation,
@@ -562,7 +564,7 @@ function soBoughtTicket(data) {
     },
     function (res) {
       if (res.data.overLapped) {
-        const id = `#${data.idSeat}S`;
+        const id = `#${data.seat}S`;
         $(id).removeClass('holding');
         $(id).addClass('order');
       }

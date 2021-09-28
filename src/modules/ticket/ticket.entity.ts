@@ -10,7 +10,7 @@ export class Ticket {
   seatPosition: SeatPosition;
 
   @Column({ name: 'IDUser' })
-  user: string;
+  user: number;
 
   @Column({ name: 'GiaVeTong' })
   price: number;

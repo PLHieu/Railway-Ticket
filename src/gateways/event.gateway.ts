@@ -11,12 +11,15 @@ import { TicketService } from 'src/modules/ticket/ticket.service';
 import { getDateString } from 'src/shared/utils/date.utils';
 import * as TicketStatus from '../shared/constants/ticket-status.constant';
 import * as EventCode from '../shared/constants/event.constant';
+import { UserService } from 'src/modules/user/user.service';
+import * as randomstring from 'randomstring';
 
 @WebSocketGateway()
 export class EventGateway implements OnGatewayConnection {
   constructor(
     private readonly seatService: SeatService,
     private readonly ticketService: TicketService,
+    private readonly userService: UserService,
   ) {}
 
   handleConnection(client: any) {
@@ -135,6 +138,36 @@ export class EventGateway implements OnGatewayConnection {
         code: EventCode.DELETE_TICKET_SUCCESSFULLY,
       };
     }
+  }
+
+  @SubscribeMessage('bought-ticket')
+  async boughtTicket(@MessageBody() { userInfo }, @ConnectedSocket() socket) {
+    // console.log(userInfo);
+    const newUser = await this.userService.createUser(userInfo.name);
+    const codeCart = randomstring.generate(6);
+    await this.ticketService.boughtTickets(
+      socket.handshake.session.holdedTicket.map((ticket) => ticket.id),
+      newUser.id,
+      codeCart,
+    );
+
+    // announce to room: BOUGHT
+    socket.handshake.session.holdedTicket.forEach((ticket) => {
+      socket
+        .to(
+          `${ticket.seatPosition.train}-${
+            ticket.seatPosition.coach
+          }-${getDateString(new Date(ticket.departTime))}`,
+        )
+        .emit('event', {
+          data: {
+            seat: ticket.seatPosition.seat,
+            leaveStation: ticket.leaveStation,
+            arriveStation: ticket.arriveStation,
+          },
+          code: EventCode.SOMEONE_BOUGHT_TICKET_SUCCESSFULLY,
+        });
+    });
   }
 }
 

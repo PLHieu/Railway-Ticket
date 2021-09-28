@@ -52,4 +52,14 @@ export class TicketService {
 
     return ticket;
   }
+
+  async boughtTickets(tickets: number[], user: number, cart: string) {
+    tickets.forEach(
+      async (idTicket) =>
+        await this.ticketRepository.update(idTicket, {
+          user,
+          cart,
+        }),
+    );
+  }
 }
