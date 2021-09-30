@@ -34,7 +34,7 @@ export class TasksService {
         )
         .emit('event', {
           data: {
-            seat: ticket.seatPosition.seat,
+            seatPosition: ticket.seatPosition,
             leaveStation: ticket.leaveStation,
             arriveStation: ticket.arriveStation,
           },

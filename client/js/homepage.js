@@ -52,10 +52,10 @@ socket.on('event', (data) => {
 
     case 7:
       /*
-                khi mot nguoi khac o cung toa unholdticket thanh cong thi server thong bao su kien nay den minh  
+                khi mot nguoi khac o cung toa unholdticket/unbought thanh cong thi server thong bao su kien nay den minh  
             */
-      console.log('someone unhold seat');
-      soUnHoldTicket(data.data);
+      console.log('someone remove ticket');
+      soRemoveTicket(data.data);
       break;
 
     // case 6:
@@ -81,15 +81,6 @@ socket.on('event', (data) => {
             */
       console.log('someone bought seat');
       soBoughtTicket(data.data);
-      break;
-
-    case 15:
-      /*
-                khi nguoi khac huy thanh toan ve tau 
-            */
-      console.log("SO's payment fail");
-      console.log(data.data);
-      soUnBoughtTicket(data.data);
       break;
 
     default:
@@ -146,7 +137,7 @@ function onClickSearchSeat() {
   if (this.id == 'headcoach') {
     return;
   }
-  listSeatSelected = [];
+  // listSeatSelected = [];
   coachselected = findCoachByID(parseInt(this.id));
   // console.log("coach" + coachselected.IDToa + "selected");
   socket.emit(
@@ -297,7 +288,7 @@ function onClickBuyTicket() {
   });
 }
 function onClickSearchCoach() {
-  listSeatSelected = [];
+  // listSeatSelected = [];
   trainselected = findTrainByID(this.id);
   // console.log(trainselected.IDTau + "selected");
   // console.log(trainselected)
@@ -517,7 +508,7 @@ function soHoldTicket(data) {
   );
 }
 
-function soUnHoldTicket(data) {
+function soRemoveTicket(data) {
   $.post(
     '/station/checkoverlap/',
     {
@@ -528,25 +519,18 @@ function soUnHoldTicket(data) {
     },
     function (res) {
       if (res.data.overLapped) {
-        const id = `#${data.seat}S`;
-        $(id).removeClass('holding');
-      }
-    },
-  );
-}
+        const id = `#${data.seatPosition.seat}S`;
+        if ($(id).hasClass('bought')) {
+          const index = listSeatSelected.indexOf(
+            JSON.stringify(data.seatPosition),
+          );
+          if (index > -1) {
+            listSeatSelected.splice(index, 1);
+          }
+        }
 
-function soUnBoughtTicket(data) {
-  $.post(
-    '/api/checkoverlap/',
-    {
-      firstLeaveStation: leaveStation,
-      firstArriveStation: arriveStation,
-      secondLeaveStation: data.leaveStation,
-      secondArriveStation: data.arriveStation,
-    },
-    function (res) {
-      if (res.data.overLapped) {
-        const id = `#${data.idSeat}S`;
+        $(id).removeClass('holding');
+        $(id).removeClass('bought');
         $(id).removeClass('order');
       }
     },
