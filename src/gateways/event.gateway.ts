@@ -33,13 +33,20 @@ export class EventGateway implements OnGatewayConnection {
     @ConnectedSocket() client: any,
   ) {
     const seats: any = await this.seatService.SearhSeat(data);
-
     if (seats) {
       const holdedTickets = client.handshake.session.holdedTicket;
 
       for (let i = 0; i < seats.length; i++) {
         if (seats[i].status === TicketStatus.SO_HOLDING) {
-          if (checkSeatInHoledTickets(holdedTickets, seats[i])) {
+          if (
+            checkSeatInHoledTickets(
+              holdedTickets,
+              seats[i],
+              data.arriveStation,
+              data.leaveStation,
+              data.departTime,
+            )
+          ) {
             seats[i].status = TicketStatus.ME_HOLDING;
           }
         }
@@ -171,17 +178,24 @@ export class EventGateway implements OnGatewayConnection {
   }
 }
 
-const checkSeatInHoledTickets = (holdedTickets, seat) => {
+const checkSeatInHoledTickets = (
+  holdedTickets,
+  seat,
+  arriveStation,
+  leaveStation,
+  departTime,
+) => {
   for (let i = 0; i < holdedTickets.length; i++) {
     if (
-      seat.idTrain.toString() === holdedTickets[i].idTrain.toString() &&
-      seat.idCoach.toString() === holdedTickets[i].idCoach.toString() &&
-      seat.idSeat.toString() === holdedTickets[i].idSeat.toString() &&
-      seat.leaveStation.toString() ===
-        holdedTickets[i].leaveStation.toString() &&
-      seat.arriveStation.toString() ===
-        holdedTickets[i].arriveStation.toString() &&
-      seat.departTime.toString() === holdedTickets[i].departTime.toString()
+      seat.seatPosition.train.toString() ===
+        holdedTickets[i].seatPosition.train.toString() &&
+      seat.seatPosition.coach.toString() ===
+        holdedTickets[i].seatPosition.coach.toString() &&
+      seat.seatPosition.seat.toString() ===
+        holdedTickets[i].seatPosition.seat.toString() &&
+      leaveStation.toString() === holdedTickets[i].leaveStation.toString() &&
+      arriveStation.toString() === holdedTickets[i].arriveStation.toString() &&
+      departTime.toString() === holdedTickets[i].departTime.toISOString()
     ) {
       return true;
     }

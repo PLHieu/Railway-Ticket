@@ -33,7 +33,7 @@ export class SeatService {
     for (let i = 0; i < listSeats.length; i++) {
       listSeats[i].status = await this.CheckBoughtSeat({
         ...data,
-        seat: listSeats[i].seat,
+        seat: listSeats[i].seatPosition.seat,
       });
     }
 
@@ -56,7 +56,7 @@ export class SeatService {
     // tim kiem tat ca nhung nguoi mua ve tai seat do
     const listSeats: any = await this.ticketRepository.find({
       seatPosition: { train, coach, seat },
-      departTime,
+      departTime: new Date(departTime),
     });
 
     // Chua co ai mua ve tai seat nay
