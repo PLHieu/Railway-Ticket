@@ -1,5 +1,12 @@
 import { SeatPosition } from 'src/shared/class/seatPosition.class';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Cart } from '../cart/cart.entity';
 
 @Entity({ name: 'DatVe', synchronize: false })
 export class Ticket {
@@ -36,6 +43,10 @@ export class Ticket {
   @Column({ name: 'GioKhoiHanh' })
   departTime: Date;
 
-  @Column({ name: 'GioHang' })
-  cart: string;
+  @ManyToOne(() => Cart)
+  @JoinColumn({ name: 'GioHang' })
+  cart: Cart;
+
+  @Column({ name: 'holdingTime' })
+  holdingTime: Date;
 }

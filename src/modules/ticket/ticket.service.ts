@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
+import { CartService } from '../cart/cart.service';
 import { CreateTicketDto } from './dtos/create-ticket.dto';
 import { Ticket } from './ticket.entity';
 
@@ -7,6 +8,7 @@ export class TicketService {
   constructor(
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    private readonly cartService: CartService,
   ) {}
 
   async holdTicket(dto: any) {
@@ -54,12 +56,50 @@ export class TicketService {
   }
 
   async boughtTickets(tickets: number[], user: number, cart: string) {
+    const newCart = await this.cartService.createCart({
+      id: cart,
+      price: 0,
+      user,
+      status: 0,
+    });
+
     tickets.forEach(
       async (idTicket) =>
         await this.ticketRepository.update(idTicket, {
           user,
-          cart,
+          cart: newCart,
         }),
     );
+  }
+
+  /**
+   * Get all unpaid outdated ticket && un bought outdated ticket
+   */
+  getAllOutDatedTicket() {
+    return this.ticketRepository.find({
+      where: [
+        {
+          // un bought outdated ticket
+          cart: null,
+          holdingTime: Raw(
+            (alias) => `date_add(${alias}, interval 30 second) < NOW()`,
+          ),
+        },
+        {
+          // unpaid outdated ticket
+          cart: {
+            status: 0,
+          },
+          holdingTime: Raw(
+            (alias) => `date_add(${alias}, interval 60 second) < NOW()`,
+          ),
+        },
+      ],
+      relations: ['cart'],
+    });
+  }
+
+  deleteTicket(id) {
+    return this.ticketRepository.delete(id);
   }
 }

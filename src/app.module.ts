@@ -9,8 +9,8 @@ import { join } from 'path';
 import { ArrangedTrainModule } from './modules/arrangedTrain/arrangedTrain.module';
 import { CoachModule } from './modules/coach/coach.module';
 import { EventModule } from './gateways/event.module';
-import { SeatModule } from './modules/seat/seat.module';
-
+import { TasksModule } from './tasks/tasks.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -22,6 +22,8 @@ import { SeatModule } from './modules/seat/seat.module';
     ArrangedTrainModule,
     CoachModule,
     EventModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
